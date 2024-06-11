@@ -16,6 +16,10 @@
         "en": "Login",
         "bn": "লগইন"
       },
+       "category": {
+        "en": "Categories",
+        "bn": "ক্যাটাগরি সমূহ"
+       },
       "EN": {
         "en": "en",
         "bn": "ইংরেজি"
@@ -149,8 +153,8 @@
         "bn": "শিখার উপকরণ ঘণ্টায়"
       },
       "students": {
-        "en": "Number of Students Enrolled", 
-        "bn": "মোট যত শিক্ষার্থী ভর্তি হয়েছে"
+        "en": "Website Visitors", 
+        "bn": "ওয়েবসাইট পরিদর্শন করেছে "
       }
     },
     "courses": {

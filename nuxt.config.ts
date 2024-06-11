@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     strictNuxtContentPaths: true,
   },
   site: {
-    url: 'https://blog.nurriyad.xyz',
+    url: 'http://praromvik.org',
     identity: {
       type: 'Person',
     },

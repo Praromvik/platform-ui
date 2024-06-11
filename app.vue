@@ -1,13 +1,13 @@
 <script setup>
 const description
-  = 'Riyad, Software Engineer at AppsCode working on ByteBuilders, with over 2+ years experience in Frontend development.'
+  = 'Praromvik is a platform to kickstart your leaning of new technology'
 const ogTitle
-  = 'Riyad codes and helps others learn Javascript, Typescript, Vue, Nuxt, & Problem Solving'
+  = 'Praromvik Specialized in DevOps engineering'
 const twitterDescription
-  = 'My blog website, where I play around with Nuxt, Vue, and more and showcase my blog, resources, etc'
+  = 'Praromvik has blogs , videos and demo project to learn from'
 const image
   = 'https://res.cloudinary.com/dmecmyphj/image/upload/v1673548905/nuxt-blog/cover_ntgs6u.webp'
-const mySite = 'https://blog-nurriyad.vercel.app/'
+const mySite = 'http://praromvik.org'
 useHead({
   htmlAttrs: {
     lang: 'en',

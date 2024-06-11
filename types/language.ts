@@ -15,6 +15,10 @@ export interface HeaderData {
     en?: string
     bn?: string
   }
+  category: {
+    en?: string
+    bn?: string
+  }
   EN: {
     en?: string
     bn?: string

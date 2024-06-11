@@ -26,10 +26,10 @@ useHead({
     {
       name: 'description',
       content:
-        'Welcome To My Blog Site. Get Web Development, Javascript, Typescript, NodeJs, Vue, and Nuxt, Related Articles, Tips, Learning resources and more.',
+        'Learn about all the new tech like k8s , nuxt , aws , azure , docker etc',
     },
   ],
-  titleTemplate: 'Riyad\'s Blog - %s',
+  titleTemplate: 'Praromvik',
 })
 </script>
 

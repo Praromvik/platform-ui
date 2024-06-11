@@ -16,14 +16,12 @@ defineOgImageComponent('About', {
   headline: 'Greetings 👋',
   title: 'প্রারম্ভিক ',
   description: 'Dive into cloud development with us and learn  Docker, k8s and many more',
-  link: '/riyad.jpg',
 })
 </script>
 
 <template>
   <main class="container max-w-6xl mx-auto text-zinc-600">
     <MainHero />
-    <MainRecent />
     <MainTrending />
   </main>
 </template>

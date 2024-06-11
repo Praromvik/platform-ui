@@ -43,14 +43,9 @@ function toggleLanguage(language: string) {
       <ul class="flex items-center space-x-3 sm:space-x-6 text-sm sm:text-lg">
         <!-- This section is for Menu in desktop mode -->
         <ul class="hidden sm:flex items-center space-x-3 sm:space-x-6 text-sm sm:text-lg">
-          <li>
-            <NuxtLink to="/courses" :class="{ underline: path === 'courses' }">
-              {{ headerData.courses[selectedlanguage as SupportedLanguage] }}
-            </NuxtLink>
-          </li>
-          <li>
-            <NuxtLink to="/certify" :class="{ underline: path === 'certify' }">
-              {{ headerData.certify[selectedlanguage as SupportedLanguage] }}
+          <li title="Categories" :class="{ underline: path === 'categories' }">
+            <NuxtLink to="/categories" aria-label="About me">
+              {{ headerData.category[selectedlanguage as SupportedLanguage] }}
             </NuxtLink>
           </li>
           <li title="About Us" :class="{ underline: path === 'about' }">
@@ -109,13 +104,7 @@ function toggleLanguage(language: string) {
             </li>
           </ClientOnly>
         </li>
-        <li>
-          <NuxtLink to="/login">
-            <button class="bg-sky-700 rounded-xl text-white py-3 px-6 hover:scale-105 duration-300">
-              {{ headerData.login[selectedlanguage as SupportedLanguage] }}
-            </button>
-          </NuxtLink>
-        </li>
+
         <!-- this div is for Hamburger menu -->
         <div class="sm:hidden relative">
           <button class="text-gray-600 focus:outline-none dark:text-white pt-2" @click="toggleMenu">
@@ -128,14 +117,9 @@ function toggleLanguage(language: string) {
             class="absolute top-full right-0 mt-2 w-32 dark:bg-blue-950 bg-white shadow-lg rounded-md overflow-hidden "
           >
             <ul class="p-2">
-              <li>
-                <NuxtLink to="/courses" :class="{ underline: path === 'courses' }">
-                  {{ headerData.courses[selectedlanguage as SupportedLanguage] }}
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink to="/certify" :class="{ underline: path === 'certify' }">
-                  {{ headerData.certify[selectedlanguage as SupportedLanguage] }}
+              <li title="Categories" :class="{ underline: path === 'categories' }">
+                <NuxtLink to="/categories" aria-label="About me">
+                  Category
                 </NuxtLink>
               </li>
               <li title="About Us" :class="{ underline: path === 'about' }">
