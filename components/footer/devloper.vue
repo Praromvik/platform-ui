@@ -23,7 +23,7 @@ const selectedlanguage = useCookie< string >('language', {
     </p>
     <div class="my-3 space-x-3 pb-3">
       <NuxtLink
-        to="https://github.com/nurRiyad"
+        to="https://discord.gg/uv2hQaCH"
         target="_blank"
         class="p-2 bg-gray-300 text-gray-800 rounded-md dark:bg-sky-700 dark:text-[#F1F2F4]"
         aria-label="Github"

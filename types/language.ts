@@ -167,5 +167,15 @@ export interface Courses {
     bn?: string
   }
 }
+export interface CategoryHero {
+  category: {
+    en?: string
+    bn?: string
+  }
+  description: {
+    en?: string
+    bn?: string
+  }
+}
 
 export type SupportedLanguage = 'en' | 'bn'

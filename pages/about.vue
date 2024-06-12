@@ -7,7 +7,7 @@ defineOgImageComponent('About', {
 </script>
 
 <template>
-  <div class="py-5">
+  <div class="py-5 mt-8">
     <div class="sm:grid grid-cols-8 px-6 py-5 sm:py-9 gap-5 container max-w-6xl  mx-auto">
       <div class="col-span-5  max-w-md">
         <div class="flex justify-between">
@@ -18,7 +18,7 @@ defineOgImageComponent('About', {
 
             <div class="my-3 space-x-2 md:space-x-3 pb-10">
               <NuxtLink
-                to="https://github.com/nurRiyad"
+                to="https://discord.gg/uv2hQaCH"
                 target="_blank"
                 class="px-2 py-1 lg:px-3 lg:py-2 bg-gray-300 text-gray-800 rounded-md dark:bg-slate-700 dark:text-[#F1F2F4]"
                 aria-label="Github"

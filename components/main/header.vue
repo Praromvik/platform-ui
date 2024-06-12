@@ -119,7 +119,7 @@ function toggleLanguage(language: string) {
             <ul class="p-2">
               <li title="Categories" :class="{ underline: path === 'categories' }">
                 <NuxtLink to="/categories" aria-label="About me">
-                  Category
+                  {{ headerData.category[selectedlanguage as SupportedLanguage] }}
                 </NuxtLink>
               </li>
               <li title="About Us" :class="{ underline: path === 'about' }">

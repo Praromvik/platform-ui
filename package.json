@@ -39,7 +39,6 @@
     "cookie-universal-nuxt": "^2.2.2",
     "nuxt-storage": "^1.2.2",
     "pinia": "^2.1.7",
-    "primevue": "^3.48.1",
     "vue-countup-v3": "^1.4.1",
     "vue3-toastify": "^0.2.1"
   }

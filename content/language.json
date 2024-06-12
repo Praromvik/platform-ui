@@ -163,6 +163,16 @@
         "bn": "নির্বাচিত কোর্সসমূহ"
       }
       
+    },
+    "categoryhero": {
+      "category": {
+        "en": "Categories",
+        "bn": "ক্যাটাগরি সমূহ"
+       },
+      "description": {
+        "en": "Blow this category is generated from all the tags are mentioned in the different blog post", 
+        "bn": "আপনার পছন্দের ক্যাটাগরির টপিক বাছাই করে ঐ সম্পর্কে জ্ঞান অর্জন করুন "
+      }
     }
     
 }

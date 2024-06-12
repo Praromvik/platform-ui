@@ -21,12 +21,6 @@ const selectedlanguage = useCookie< string >('language', {
     <NuxtLink to="/" class="hover:underline">
       {{ footerData.link.home[selectedlanguage ? selectedlanguage as SupportedLanguage : appStore.language as SupportedLanguage] }}
     </NuxtLink>
-    <NuxtLink to="/courses" class="hover:underline">
-      {{ footerData.link.courses[selectedlanguage ? selectedlanguage as SupportedLanguage : appStore.language as SupportedLanguage] }}
-    </NuxtLink>
-    <NuxtLink to="/certify" class="hover:underline">
-      {{ footerData.link.courses[selectedlanguage ? selectedlanguage as SupportedLanguage : appStore.language as SupportedLanguage] }}
-    </NuxtLink>
     <NuxtLink to="/about" class="hover:underline">
       {{ footerData.link.about[selectedlanguage ? selectedlanguage as SupportedLanguage : appStore.language as SupportedLanguage] }}
     </NuxtLink>
