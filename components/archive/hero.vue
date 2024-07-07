@@ -9,9 +9,9 @@
           Here you will find all the blog posts I have written & published on this site.
         </p>
       </div>
-      <div class="px-6 justify-self-center">
-        <LogoDogpow />
-      </div>
+     
+      <img src="../../assets/images/cat.svg"/>
+      
     </div>
   </div>
 </template>

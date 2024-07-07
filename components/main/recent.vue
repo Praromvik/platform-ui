@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 // Get Last 6 Publish Post from the content/blog directory
+import { toast } from 'vue3-toastify'
 import languages from '~/content/language.json';
 import { useAppStore } from '~/stores/appStore.js';
 import type { Courses, SupportedLanguage } from '~/types/language';
@@ -27,6 +28,11 @@ useHead({
   ],
   titleTemplate: 'Praromvik - %s',
 })
+
+function handleCourse()
+{
+  toast.info('Course Will Open Soon', { autoClose: 3000 })
+}
 </script>
 
 <template>
@@ -40,9 +46,9 @@ useHead({
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
       <CourseCard
-        path="/courses/something"
         title="Kubernetes Basic to Advance"
-        description="Kubernetes is JOss"
+        description="Kubernetes is the future.If you are a experienced Devops Eng. Or trying to enter in it, This course is Best for you"
+        @click.prevent="handleCourse"
       />
 
       <template v-if="data?.length === 0">
