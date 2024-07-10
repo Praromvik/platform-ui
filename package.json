@@ -10,6 +10,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.1",
     "cookie-universal-nuxt": "^2.2.2",
     "nuxt-storage": "^1.2.2",
@@ -37,7 +38,9 @@
     "nuxt-og-image": "^3.0.0-rc.12",
     "nuxt-simple-sitemap": "^4.2.0",
     "typescript": "^5.3.3",
-    "vue-content-loader": "^2.0.1"
+    "vite-plugin-vuetify": "^2.0.3",
+    "vue-content-loader": "^2.0.1",
+    "vuetify": "^3.6.12"
   },
   "overrides": {
     "vue": "latest"

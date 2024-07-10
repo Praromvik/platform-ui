@@ -3,7 +3,7 @@ import { defineProps, withDefaults } from 'vue'
 
 // Define interface for props
 interface Props {
-  path: string
+  path?: string
   title: string
   instructor?: string
   description: string
