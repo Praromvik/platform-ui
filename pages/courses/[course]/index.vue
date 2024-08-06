@@ -1,15 +1,28 @@
 <script setup lang="ts">
+import axios from 'axios'
+
 const router = useRouter()
 const route = useRoute()
 const courseName = route.params.course
 const ifContentHidden = ref(false)
+async function getCourse() {
+  const url = `http://localhost:3030/course/${courseName}`
+  const resp = await axios.get(url)
+  return resp
+}
+
+async function getContent() {
+  const url = `http://localhost:3030/course/${courseName}{/content/list`
+  const resp = await axios.get(url)
+  return resp
+}
+
 const contentTable = [{
   id: 0,
   title: 'First',
   time: '3min',
   url: 'https://www.youtube.com/embed/3Bkzl4AIXvc?si=wtMeav-GBoCM0V7n',
   completed: true,
-
 }, {
   id: 1,
   title: 'Second',
@@ -25,6 +38,11 @@ const contentTable = [{
   completed: true,
 },
 ]
+
+onMounted(() => {
+  getCourse()
+  getContent()
+})
 </script>
 
 <template>

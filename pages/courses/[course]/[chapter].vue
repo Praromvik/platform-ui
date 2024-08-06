@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import axios from 'axios'
+
+const route = useRoute()
 const ifContentHidden = ref(false)
+const courseName = route.params.course
+const chapterName = route.params.chapter
 const contentTable = [{
   id: 0,
   title: 'First',
@@ -34,6 +39,16 @@ function changeVideo(id: number) {
 function prevNextButton(id: number) {
   changeVideo(id)
 }
+
+async function getContent() {
+  const url = `http://localhost:3030/course/${courseName}/content/${chapterName}`
+  const resp = await axios.get(url)
+  return resp
+}
+
+onMounted(() => {
+  getContent()
+})
 </script>
 
 <template>
