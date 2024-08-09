@@ -4,7 +4,8 @@ import axios from 'axios'
 const route = useRoute()
 const ifContentHidden = ref(false)
 const courseName = route.params.course
-const chapterName = route.params.chapter
+const LessonName = route.params.lesson
+const contentName = route.params.content
 const contentTable = [{
   id: 0,
   title: 'First',
@@ -41,7 +42,7 @@ function prevNextButton(id: number) {
 }
 
 async function getContent() {
-  const url = `http://localhost:3030/course/${courseName}/content/${chapterName}`
+  const url = `http://localhost:3030/course/${courseName}/content/${contentName}`
   const resp = await axios.get(url)
   return resp
 }
