@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
+import loader from '../../../components/loader/course'
 
 interface Course {
   title: string
@@ -94,6 +95,9 @@ onMounted(() => {
 </script>
 
 <template>
+  <div v-if="isfetchingCourse || isfetchingLesson">
+    <loader />
+  </div>
   <div class="px-2 py-5 sm:py-9 max-w-6xl mt-10 mx-auto">
     <div class="flex justify-center mb-6">
       <img class="h-40 w-full" :src="courseObject?.image">
@@ -177,24 +181,24 @@ onMounted(() => {
           <p class="font-semibold text-center py-3">
             Module's List
           </p>
-          <div>
-            <div class="flex justify-between items-center cursor-pointe  border border-t-gray-300 border-b-gray-300 p-3" @click="ifContentHidden = !ifContentHidden">
+          <div v-for="lesson in Lessons" :key="lesson.title">
+            <div class="flex justify-between items-center cursor-pointe  border border-t-gray-300 border-b-gray-300 p-3" @click="selectedLesson = lesson._id">
               <div class="font-semibold">
-                Module 1
+                {{ lesson.title }}
               </div>
               <div>
-                <Icon v-if="!ifContentHidden" name="ep:caret-bottom" size="1.5em" />
+                <Icon v-if="selectedLesson === lesson._id" name="ep:caret-bottom" size="1.5em" />
                 <Icon v-else name="ep:caret-right" size="1.5em" />
               </div>
             </div>
-            <div v-if="!ifContentHidden" class="border border-t-0 border-gray-300 h-36 overflow-y-auto">
-              <div v-for="lesson in Lessons" :key="lesson.title" @click="router.push(`${courseId}/${lesson.title}`)">
+            <div v-if="selectedLesson === lesson._id" class="border border-t-0 border-gray-300 h-auto overflow-y-auto">
+              <div v-for="content in lesson.contents" :key="content" @click="router.push(`${courseId}/${lesson._id}/${content}`)">
                 <div class="flex items-center mb-2 cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="fill-current text-gray-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="fill-current text-gray-600 ml-1">
                     <path d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22" />
                   </svg>
                   <div class="ml-2">
-                    <p>{{ lesson.title }}</p>
+                    <p>{{ content }}</p>
                   </div>
                 </div>
               </div>
@@ -202,7 +206,6 @@ onMounted(() => {
           </div>
         </div>
       </div>
-
       <div class="hidden sm:block border border-gray-300 h-5/6 overflow-y-auto">
         <p class="font-semibold text-center py-3">
           Module's List
