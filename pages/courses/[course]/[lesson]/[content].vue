@@ -1,53 +1,72 @@
 <script setup lang="ts">
 import axios from 'axios'
 
+interface Lesson {
+  _id: string
+  title: string
+  contents: Array<string>
+}
+interface Content {
+  _id: string
+  title: string
+  type: string
+  description: string
+  data: string
+}
 const route = useRoute()
+const router = useRouter()
 const ifContentHidden = ref(false)
 const courseName = route.params.course
-const LessonName = route.params.lesson
+const lessonName = route.params.lesson
 const contentName = route.params.content
-const contentTable = [{
-  id: 0,
-  title: 'First',
-  time: '3min',
-  url: 'https://www.youtube.com/embed/3Bkzl4AIXvc?si=wtMeav-GBoCM0V7n',
-  completed: true,
 
-}, {
-  id: 1,
-  title: 'Second',
-  time: '5min',
-  url: 'https://www.youtube.com/embed/fFcHnlCw3nI?si=GFHvyGy5lGPuBY8l',
-  completed: true,
+const selectedLesson = ref<Lesson>(
+  {
+    _id: 'introduction',
+    title: '',
+    contents: [
+      'course-introduction',
+      'refresher-lab-01',
+    ],
+  },
+)
+const selectedContent = ref<Content>({
+  _id: 'course-introduction',
+  title: 'Introduction of Golang',
+  description: 'some description',
+  type: 'video',
+  data: 'https://www.youtube.com/embed/ZmKy_fnRM_E?si=OnoGdwHqW2KsnzOa',
+})
+const contentIndex = ref(0)
 
-}, {
-  id: 2,
-  title: 'Third',
-  time: '10min',
-  url: 'https://www.youtube.com/embed/R0ksvPPrQkg?si=inj3D1E2pPj-Tafe',
-  completed: true,
-},
-]
-const selecedId = ref(0)
-const selectedVideoUrl = ref(contentTable[selecedId.value].url)
-const selecedVideTitle = ref(contentTable[selecedId.value].title)
-
-function changeVideo(id: number) {
-  selecedId.value = id
-  selecedVideTitle.value = contentTable[id].title
-  selectedVideoUrl.value = contentTable[id].url
-}
-function prevNextButton(id: number) {
-  changeVideo(id)
+function prevNextButton(idx: number) {
+  const prevNextContent = selectedLesson.value.contents[idx]
+  router.push(`${prevNextContent}`)
 }
 
 async function getContent() {
-  const url = `http://localhost:3030/course/${courseName}/content/${contentName}`
-  const resp = await axios.get(url)
-  return resp
+  try {
+    const url = `http://localhost:3030/course/${courseName}/content/${contentName}`
+    const resp = await axios.get(url)
+    return resp
+  }
+  catch (e) {
+    console.log(e)
+  }
+}
+async function getContentList() {
+  try {
+    const url = `http://localhost:3030/course/${courseName}/lesson/${lessonName}`
+    const resp = await axios.get(url)
+    selectedLesson.value = resp.data
+  }
+  catch (e) {
+    console.log(e)
+  }
 }
 
 onMounted(() => {
+  getContentList()
   getContent()
 })
 </script>
@@ -57,16 +76,31 @@ onMounted(() => {
     <div class="sm:col-span-6">
       <iframe
         class="w-full h-96"
-        :src="selectedVideoUrl"
-        :title="selecedVideTitle"
+        :src="selectedContent.data"
+        :title="selectedContent.title"
         frameborder="0"
         allowfullscreen
       />
       <div class="flex justify-between sm:mb-10 mb-6">
-        <button :disabled="selecedId === 0" @click="prevNextButton(selecedId - 1)">
-          Prev
+        <button
+          :disabled="contentIndex === 0"
+          :class="{
+            'bg-blue-500 text-white font-semibold py-1 px-2 mt-1 rounded hover:bg-blue-600': contentIndex !== 0,
+            'bg-gray-300 text-gray-500 py-1 px-2 mt-1 rounded cursor-not-allowed opacity-50': contentIndex === 0,
+          }"
+          @click="prevNextButton(contentIndex - 1)"
+        >
+          Previous
         </button>
-        <button :disabled="selecedId === contentTable.length - 1" @click="prevNextButton(selecedId + 1)">
+
+        <button
+          :disabled="contentIndex === selectedLesson.contents.length - 1"
+          :class="{
+            'bg-blue-500 text-white font-semibold py-1 px-2 mt-1 rounded hover:bg-blue-600': contentIndex !== selectedLesson.contents.length - 1,
+            'bg-gray-300 text-gray-500 py-1 px-2 mt-1 rounded cursor-not-allowed opacity-50': contentIndex === selectedLesson.contents.length - 1,
+          }"
+          @click="prevNextButton(contentIndex + 1)"
+        >
           Next
         </button>
       </div>
@@ -80,51 +114,39 @@ onMounted(() => {
             <Icon v-else name="ep:caret-right" size="1.5em" />
           </div>
         </div>
-        <div v-if="!ifContentHidden" class="border border-t-0 border-gray-300 rounded-b-lg p-3 h-36 overflow-y-auto">
-          <div v-for="content in contentTable" :key="content.id" @click="changeVideo(content.id)">
-            <div class="flex items-center">
-              <svg v-if="selecedId === content.id" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="fill-current text-gray-600">
+        <div v-if="!ifContentHidden" class="border border-t-0 border-gray-300 rounded-b-lg h-36 overflow-y-auto">
+          <div v-for="content in selectedLesson.contents" :key="content" @click="router.push(`${content}`)">
+            <div :class="`flex items-center ${content === contentName ? 'bg-slate-300' : ''} p-2`">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="fill-current text-gray-600">
                 <path d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22" />
               </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8" /></svg>
               <div class="ml-2">
-                <p>{{ content.title }}</p>
-                <p class="text-sm text-gray-500">
-                  {{ content.time }}
-                </p>
+                <p>{{ content }}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
       <p class="font-bold text-5xl mt-2">
-        {{ selecedVideTitle }}
+        {{ selectedContent.title }}
       </p>
       <hr>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum nemo rem iure iusto praesentium cupiditate earum cumque aspernatur asperiores nisi vitae rerum explicabo provident magnam consectetur, assumenda a dolor perspiciatis.</p>
+      <p>{{ selectedContent.description }}</p>
     </div>
     <div class="hidden sm:block sm:col-span-2">
-      <div class="flex justify-between items-center cursor-pointe border border-gray-300 rounded-t-lg p-3" @click="ifContentHidden = !ifContentHidden">
+      <div class="flex justify-between items-center cursor-pointe border border-gray-300 rounded-t-lg p-3">
         <div class="font-semibold">
           Table Of Content
         </div>
-        <div>
-          <Icon v-if="!ifContentHidden" name="ep:caret-bottom" size="1.5em" />
-          <Icon v-else name="ep:caret-right" size="1.5em" />
-        </div>
       </div>
-      <div v-if="!ifContentHidden" class="border border-t-0 border-gray-300 rounded-b-lg p-3">
-        <div v-for="content in contentTable" :key="content.id" @click="changeVideo(content.id)">
-          <div class="flex items-center">
-            <svg v-if="selecedId === content.id" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="fill-current text-gray-600">
+      <div class="border border-t-0 border-gray-300 rounded-b-lg">
+        <div v-for="content in selectedLesson?.contents" :key="content" @click="router.push(`${content}`)">
+          <div :class="`flex items-center ${content === contentName ? 'bg-slate-300' : ''} p-2`">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="fill-current text-gray-600">
               <path d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22" />
             </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8" /></svg>
             <div class="ml-2">
-              <p>{{ content.title }}</p>
-              <p class="text-sm text-gray-500">
-                {{ content.time }}
-              </p>
+              <p>{{ content }}</p>
             </div>
           </div>
         </div>

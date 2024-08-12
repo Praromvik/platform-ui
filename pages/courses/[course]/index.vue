@@ -87,7 +87,11 @@ async function getLesson() {
   }
   isfetchingLesson.value = false
 }
-
+function setUnSetLessonId(_id: string) {
+  if (selectedLesson.value === _id)
+    selectedLesson.value = ''
+  else selectedLesson.value = _id
+}
 onMounted(() => {
   getCourse()
   getLesson()
@@ -182,7 +186,7 @@ onMounted(() => {
             Module's List
           </p>
           <div v-for="lesson in Lessons" :key="lesson.title">
-            <div class="flex justify-between items-center cursor-pointe  border border-t-gray-300 border-b-gray-300 p-3" @click="selectedLesson = lesson._id">
+            <div class="flex justify-between items-center cursor-pointe  border border-t-gray-300 border-b-gray-300 p-3" @click="setUnSetLessonId(lesson._id)">
               <div class="font-semibold">
                 {{ lesson.title }}
               </div>
@@ -211,7 +215,7 @@ onMounted(() => {
           Module's List
         </p>
         <div v-for="lesson in Lessons" :key="lesson.title">
-          <div class="flex justify-between items-center cursor-pointe border border-t-gray-300 border-b-gray-300 p-3" @click="selectedLesson = lesson._id">
+          <div class="flex justify-between items-center cursor-pointe border border-t-gray-300 border-b-gray-300 p-3" @click="setUnSetLessonId(lesson._id)">
             <div class="font-semibold">
               {{ lesson.title }}
             </div>
