@@ -26,7 +26,7 @@ const router = useRouter()
 const route = useRoute()
 const courseId = route.params.course
 const selectedLesson = ref('')
-const courseObject: Ref<Course> = ref({
+const courseObject: Ref<Course | null> = ref({
   title: 'Go: The Complete Developer\'s Guide (Golang)',
   description: 'Master the fundamentals and advanced features of the Go Programming Language (Golang)',
   instructors: [
@@ -64,17 +64,26 @@ const Lessons: Ref<Array<Lesson>> = ref([
 ])
 
 async function getCourse() {
+  const runtimeConfig = useRuntimeConfig()
   isfetchingCourse.value = true
   try {
-    const url = `http://localhost:3030/course/${courseId}`
-    const resp = await axios.get(url)
-    courseObject.value = resp.data
-  }
-  catch (e) {
-    toast.error('Cannot fetch course Info')
+    const url = `${runtimeConfig.public.backendDomain}/course/${courseId}`
+    const { data, error } = await useFetch<Course>(url, {
+      method: 'GET',
+      credentials: 'include',
+    })
+
+    if (error.value) {
+      toast.error('Cannot fetch course info')
+    } else {
+      courseObject.value = data.value  
+    }
+  } catch (e) {
+    toast.error('An unexpected error occurred')
   }
   isfetchingCourse.value = false
 }
+
 async function getLesson() {
   isfetchingLesson.value = true
   try {
