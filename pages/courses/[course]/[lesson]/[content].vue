@@ -85,8 +85,8 @@ onMounted(() => {
     <div class="sm:col-span-6">
       <iframe
         class="w-full h-96"
-        :src="selectedContent.data"
-        :title="selectedContent.title"
+        :src="selectedContent?.data"
+        :title="selectedContent?.title"
         frameborder="0"
         allowfullscreen
       />
