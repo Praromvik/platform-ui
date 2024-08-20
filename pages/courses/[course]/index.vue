@@ -37,21 +37,27 @@ async function getCourse() {
   isfetchingCourse.value = true
   try {
     const url = `${runtimeConfig.public.backendDomain}/api/course/${courseId}`
-    const { data, error } = await useFetch<Course>(url, {
+    
+    const response = await fetch(url, {
       method: 'GET',
       credentials: 'include',
     })
 
-    if (error.value)
-      toast.error('Cannot fetch course info')
-    else
-      courseObject.value = data.value
+    if (!response.ok) {
+      throw new Error('Cannot fetch course info')
+    }
+
+    const data = await response.json()
+    courseObject.value = data
   }
   catch (e) {
-    toast.error('An unexpected error occurred')
+    toast.error(e.message || 'An unexpected error occurred')
   }
-  isfetchingCourse.value = false
+  finally {
+    isfetchingCourse.value = false
+  }
 }
+
 
 async function getLesson() {
   isfetchingLesson.value = true
@@ -76,10 +82,8 @@ function setUnSetLessonId(_id: string) {
     selectedLesson.value = ''
   else selectedLesson.value = _id
 }
-onMounted(() => {
   getCourse()
-  getLesson()
-})
+
 </script>
 
 <!--
