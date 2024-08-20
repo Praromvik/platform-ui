@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import axios from 'axios'
+import { toast } from 'vue3-toastify'
 
 interface Lesson {
   _id: string
@@ -13,55 +13,64 @@ interface Content {
   description: string
   data: string
 }
+
 const route = useRoute()
 const router = useRouter()
-const ifContentHidden = ref(false)
 const courseName = route.params.course
 const lessonName = route.params.lesson
 const contentName = route.params.content
-
-const selectedLesson = ref<Lesson>(
-  {
-    _id: 'introduction',
-    title: '',
-    contents: [
-      'course-introduction',
-      'refresher-lab-01',
-    ],
-  },
-)
-const selectedContent = ref<Content>({
-  _id: 'course-introduction',
-  title: 'Introduction of Golang',
-  description: 'some description',
-  type: 'video',
-  data: 'https://www.youtube.com/embed/ZmKy_fnRM_E?si=OnoGdwHqW2KsnzOa',
+const selectedLesson = ref<Lesson>({
+  _id: '',
+  title: '',
+  contents: [],
 })
+const selectedContent = ref<Content | null>(null)
 const contentIndex = ref(0)
+const ifContentHidden = ref(false)
+const runtimeConfig = useRuntimeConfig()
 
 function prevNextButton(idx: number) {
-  const prevNextContent = selectedLesson.value.contents[idx]
+  const prevNextContent = selectedLesson.value?.contents[idx]
   router.push(`${prevNextContent}`)
 }
 
 async function getContent() {
   try {
-    const url = `http://localhost:3030/course/${courseName}/content/${contentName}`
-    const resp = await axios.get(url)
-    return resp
+    const url = `${runtimeConfig.public.backendDomain}/api/course/${courseName}/content/${contentName}`
+    const { data, error } = await useFetch<Content>(url, {
+      method: 'GET',
+      credentials: 'include',
+    })
+    if (error.value)
+      toast.error('Cannot fetch course info')
+
+    else
+      selectedContent.value = data.value
   }
   catch (e) {
-    console.log(e)
+    toast.error('An unexpected error occurred')
   }
 }
 async function getContentList() {
   try {
-    const url = `http://localhost:3030/course/${courseName}/lesson/${lessonName}`
-    const resp = await axios.get(url)
-    selectedLesson.value = resp.data
+    const url = `${runtimeConfig.public.backendDomain}/api/course/${courseName}/lesson/${lessonName}`
+    const { data, error } = await useFetch<Lesson>(url, {
+      method: 'GET',
+      credentials: 'include',
+    })
+    if (error.value) {
+      toast.error('Cannot fetch course info')
+    }
+    else {
+      selectedLesson.value = data.value || {
+        _id: '',
+        title: '',
+        contents: [],
+      }
+    }
   }
   catch (e) {
-    console.log(e)
+    toast.error('An unexpected error occurred')
   }
 }
 
@@ -128,10 +137,10 @@ onMounted(() => {
         </div>
       </div>
       <p class="font-bold text-5xl mt-2">
-        {{ selectedContent.title }}
+        {{ selectedContent?.title }}
       </p>
       <hr>
-      <p>{{ selectedContent.description }}</p>
+      <p>{{ selectedContent?.description }}</p>
     </div>
     <div class="hidden sm:block sm:col-span-2">
       <div class="flex justify-between items-center cursor-pointe border border-gray-300 rounded-t-lg p-3">

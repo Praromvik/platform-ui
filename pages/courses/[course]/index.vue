@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import axios from 'axios'
 import { toast } from 'vue3-toastify'
+
 import loader from '../../../components/loader/course'
 
 interface Course {
@@ -26,7 +26,64 @@ const router = useRouter()
 const route = useRoute()
 const courseId = route.params.course
 const selectedLesson = ref('')
-const courseObject: Ref<Course | null> = ref({
+const courseObject: Ref<Course | null> = ref(null)
+const Lessons: Ref<Array<Lesson> | null> = ref([])
+const isfetchingCourse = ref(false)
+const isfetchingLesson = ref(false)
+
+const runtimeConfig = useRuntimeConfig()
+
+async function getCourse() {
+  isfetchingCourse.value = true
+  try {
+    const url = `${runtimeConfig.public.backendDomain}/api/course/${courseId}`
+    const { data, error } = await useFetch<Course>(url, {
+      method: 'GET',
+      credentials: 'include',
+    })
+
+    if (error.value)
+      toast.error('Cannot fetch course info')
+    else
+      courseObject.value = data.value
+  }
+  catch (e) {
+    toast.error('An unexpected error occurred')
+  }
+  isfetchingCourse.value = false
+}
+
+async function getLesson() {
+  isfetchingLesson.value = true
+  try {
+    const url = `${runtimeConfig.public.backendDomain}/api/course/${courseId}/lesson/list`
+    const { data, error } = await useFetch<Array<Lesson>>(url, {
+      method: 'GET',
+      credentials: 'include',
+    })
+    if (error.value)
+      toast.error('Cannot fetch course info')
+    else
+      Lessons.value = data.value
+  }
+  catch (e) {
+    toast.error('An unexpected error occurred')
+  }
+  isfetchingLesson.value = false
+}
+function setUnSetLessonId(_id: string) {
+  if (selectedLesson.value === _id)
+    selectedLesson.value = ''
+  else selectedLesson.value = _id
+}
+onMounted(() => {
+  getCourse()
+  getLesson()
+})
+</script>
+
+<!--
+{
   title: 'Go: The Complete Developer\'s Guide (Golang)',
   description: 'Master the fundamentals and advanced features of the Go Programming Language (Golang)',
   instructors: [
@@ -41,10 +98,8 @@ const courseObject: Ref<Course | null> = ref({
   price: 10000,
   rating: 4.6,
   image: 'https://miro.medium.com/v2/resize:fit:1024/1*V8JWIC-tqYQkS1b1edsu3w.png',
-})
-const isfetchingCourse = ref(false)
-const isfetchingLesson = ref(false)
-const Lessons: Ref<Array<Lesson>> = ref([
+}
+[
   {
     _id: 'introduction',
     title: 'Introduction',
@@ -61,53 +116,10 @@ const Lessons: Ref<Array<Lesson>> = ref([
       'refresher-lab-01',
     ],
   },
-])
-
-async function getCourse() {
-  const runtimeConfig = useRuntimeConfig()
-  isfetchingCourse.value = true
-  try {
-    const url = `${runtimeConfig.public.backendDomain}/course/${courseId}`
-    const { data, error } = await useFetch<Course>(url, {
-      method: 'GET',
-      credentials: 'include',
-    })
-
-    if (error.value) {
-      toast.error('Cannot fetch course info')
-    } else {
-      courseObject.value = data.value  
-    }
-  } catch (e) {
-    toast.error('An unexpected error occurred')
-  }
-  isfetchingCourse.value = false
-}
-
-async function getLesson() {
-  isfetchingLesson.value = true
-  try {
-    const url = `http://localhost:3030/course/${courseId}/lesson/list`
-    const resp = await axios.get(url)
-    Lessons.value = resp.data
-  }
-  catch (e) {
-    toast.error('Cannot fetch course Info')
-  }
-  isfetchingLesson.value = false
-}
-function setUnSetLessonId(_id: string) {
-  if (selectedLesson.value === _id)
-    selectedLesson.value = ''
-  else selectedLesson.value = _id
-}
-onMounted(() => {
-  getCourse()
-  getLesson()
-})
-</script>
-
+]
+-->
 <template>
+  {{ courseObject || {} }}
   <div v-if="isfetchingCourse || isfetchingLesson">
     <loader />
   </div>
@@ -154,18 +166,6 @@ onMounted(() => {
             <img class="h-20 w-20 rounded-full border-2 border-gray-500" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR__2IIAULCR-xberpmuxf-9Jx3cJZLJgLm4tSb9cDwRQ&s">
           </div>
           <div>
-            <p>Name : {{ instructor }}</p>
-            <p>Company : Appscode</p>
-          </div>
-        </div>
-        <p class="text-xl font-bold mb-1">
-          Moderators
-        </p>
-        <div v-for="instructor in courseObject?.instructors" :key="instructor" class="flex items-center space-x-4 mb-4">
-          <div>
-            <img class="h-10 w-10 rounded-full border-2 border-gray-500" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR__2IIAULCR-xberpmuxf-9Jx3cJZLJgLm4tSb9cDwRQ&s">
-          </div>
-          <div class="text-xs">
             <p>Name : {{ instructor }}</p>
             <p>Company : Appscode</p>
           </div>
