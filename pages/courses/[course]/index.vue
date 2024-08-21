@@ -37,20 +37,19 @@ async function getCourse() {
   isfetchingCourse.value = true
   try {
     const url = `${runtimeConfig.public.backendDomain}/api/course/${courseId}`
-    
+
     const response = await fetch(url, {
       method: 'GET',
       credentials: 'include',
     })
-
-    if (!response.ok) {
+    console.log(response)
+    if (!response.ok)
       throw new Error('Cannot fetch course info')
-    }
 
     const data = await response.json()
     courseObject.value = data
   }
-  catch (e) {
+  catch (e: any) {
     toast.error(e.message || 'An unexpected error occurred')
   }
   finally {
@@ -58,76 +57,41 @@ async function getCourse() {
   }
 }
 
-
 async function getLesson() {
   isfetchingLesson.value = true
   try {
     const url = `${runtimeConfig.public.backendDomain}/api/course/${courseId}/lesson/list`
-    const { data, error } = await useFetch<Array<Lesson>>(url, {
+    const response = await fetch(url, {
       method: 'GET',
       credentials: 'include',
     })
-    if (error.value)
-      toast.error('Cannot fetch course info')
-    else
-      Lessons.value = data.value
+    console.log(response)
+    if (!response.ok)
+      throw new Error('Cannot fetch course info')
+    const data = await response.json()
+    Lessons.value = data
   }
-  catch (e) {
-    toast.error('An unexpected error occurred')
+  catch (e: any) {
+    toast.error(e.message || 'An unexpected error occurred')
   }
-  isfetchingLesson.value = false
+  finally {
+    isfetchingLesson.value = false
+  }
 }
 function setUnSetLessonId(_id: string) {
   if (selectedLesson.value === _id)
     selectedLesson.value = ''
   else selectedLesson.value = _id
 }
-  getCourse()
-
+getCourse()
+getLesson()
 </script>
 
-<!--
-{
-  title: 'Go: The Complete Developer\'s Guide (Golang)',
-  description: 'Master the fundamentals and advanced features of the Go Programming Language (Golang)',
-  instructors: [
-    'sayedtahsin',
-  ],
-  moderators: [],
-  startDate: '15th August',
-  endDate: '',
-  duration: 3,
-  capacity: 0,
-  students: 0,
-  price: 10000,
-  rating: 4.6,
-  image: 'https://miro.medium.com/v2/resize:fit:1024/1*V8JWIC-tqYQkS1b1edsu3w.png',
-}
-[
-  {
-    _id: 'introduction',
-    title: 'Introduction',
-    contents: [
-      'course-introduction',
-      'refresher-lab-01',
-    ],
-  },
-  {
-    _id: 'concurrency',
-    title: 'Concurrency',
-    contents: [
-      'course-introduction',
-      'refresher-lab-01',
-    ],
-  },
-]
--->
 <template>
-  {{ courseObject || {} }}
   <div v-if="isfetchingCourse || isfetchingLesson">
     <loader />
   </div>
-  <div class="px-2 py-5 sm:py-9 max-w-6xl mt-10 mx-auto">
+  <div v-else class="px-2 py-5 sm:py-9 max-w-6xl mt-10 mx-auto">
     <div class="flex justify-center mb-6">
       <img class="h-40 w-full" :src="courseObject?.image">
     </div>
@@ -167,7 +131,10 @@ function setUnSetLessonId(_id: string) {
         </p>
         <div v-for="instructor in courseObject?.instructors" :key="instructor" class="flex items-center space-x-4 mb-4">
           <div>
-            <img class="h-20 w-20 rounded-full border-2 border-gray-500" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR__2IIAULCR-xberpmuxf-9Jx3cJZLJgLm4tSb9cDwRQ&s">
+            <img
+              class="h-20 w-20 rounded-full border-2 border-gray-500"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR__2IIAULCR-xberpmuxf-9Jx3cJZLJgLm4tSb9cDwRQ&s"
+            >
           </div>
           <div>
             <p>Name : {{ instructor }}</p>
@@ -180,18 +147,6 @@ function setUnSetLessonId(_id: string) {
             <li>
               No paid software required - Just install your favorite text editor and browser!
             </li>
-            <li>
-              Understand terminal basics including Linux shells, SSH, and package mangers.
-            </li>
-            <li>
-              Know the basics of creating a server in the cloud (on any provider).
-            </li>
-            <li>
-              Understand the basics of web and database servers. (communicate, IP's, ports, etc.)
-            </li>
-            <li>
-              Know the basics of git and GitHub for accessing course materials.
-            </li>
           </ul>
         </div>
         <div class="sm:hidden mt-4 border border-gray-300 h-96 overflow-y-auto">
@@ -199,7 +154,10 @@ function setUnSetLessonId(_id: string) {
             Module's List
           </p>
           <div v-for="lesson in Lessons" :key="lesson.title">
-            <div class="flex justify-between items-center cursor-pointe  border border-t-gray-300 border-b-gray-300 p-3" @click="setUnSetLessonId(lesson._id)">
+            <div
+              class="flex justify-between items-center cursor-pointe  border border-t-gray-300 border-b-gray-300 p-3"
+              @click="setUnSetLessonId(lesson._id)"
+            >
               <div class="font-semibold">
                 {{ lesson.title }}
               </div>
@@ -209,10 +167,18 @@ function setUnSetLessonId(_id: string) {
               </div>
             </div>
             <div v-if="selectedLesson === lesson._id" class="border border-t-0 border-gray-300 h-auto overflow-y-auto">
-              <div v-for="content in lesson.contents" :key="content" @click="router.push(`${courseId}/${lesson._id}/${content}`)">
+              <div
+                v-for="content in lesson.contents" :key="content"
+                @click="router.push(`${courseId}/${lesson._id}/${content}`)"
+              >
                 <div class="flex items-center mb-2 cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="fill-current text-gray-600 ml-1">
-                    <path d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                    class="fill-current text-gray-600 ml-1"
+                  >
+                    <path
+                      d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22"
+                    />
                   </svg>
                   <div class="ml-2">
                     <p>{{ content }}</p>
@@ -228,7 +194,10 @@ function setUnSetLessonId(_id: string) {
           Module's List
         </p>
         <div v-for="lesson in Lessons" :key="lesson.title">
-          <div class="flex justify-between items-center cursor-pointe border border-t-gray-300 border-b-gray-300 p-3" @click="setUnSetLessonId(lesson._id)">
+          <div
+            class="flex justify-between items-center cursor-pointe border border-t-gray-300 border-b-gray-300 p-3"
+            @click="setUnSetLessonId(lesson._id)"
+          >
             <div class="font-semibold">
               {{ lesson.title }}
             </div>
@@ -238,10 +207,18 @@ function setUnSetLessonId(_id: string) {
             </div>
           </div>
           <div v-if="selectedLesson === lesson._id" class="border border-t-0 border-gray-300 p-3">
-            <div v-for="content in lesson.contents" :key="content" @click="router.push(`${courseId}/${lesson._id}/${content}`)">
+            <div
+              v-for="content in lesson.contents" :key="content"
+              @click="router.push(`${courseId}/${lesson._id}/${content}`)"
+            >
               <div class="flex items-center mb-2 cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="fill-current text-gray-600">
-                  <path d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                  class="fill-current text-gray-600"
+                >
+                  <path
+                    d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22"
+                  />
                 </svg>
                 <div class="ml-2">
                   <p>{{ content }}</p>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { toast } from 'vue3-toastify'
+import loader from '../../../../components/loader/content'
 
 interface Lesson {
   _id: string
@@ -28,49 +29,56 @@ const selectedContent = ref<Content | null>(null)
 const contentIndex = ref(0)
 const ifContentHidden = ref(false)
 const runtimeConfig = useRuntimeConfig()
-
+const isContentFetching = ref(false)
+const isLessionFetching = ref(false)
 function prevNextButton(idx: number) {
   const prevNextContent = selectedLesson.value?.contents[idx]
   router.push(`${prevNextContent}`)
 }
 
 async function getContent() {
+  isContentFetching.value = true
   try {
     const url = `${runtimeConfig.public.backendDomain}/api/course/${courseName}/content/${contentName}`
-    const { data, error } = await useFetch<Content>(url, {
+    const response = await fetch(url, {
       method: 'GET',
       credentials: 'include',
     })
-    if (error.value)
-      toast.error('Cannot fetch course info')
+    console.log(response)
+    if (!response.ok)
+      throw new Error('Cannot fetch course info')
 
-    else
-      selectedContent.value = data.value
+    const data = await response.json()
+    selectedContent.value = data
   }
-  catch (e) {
-    toast.error('An unexpected error occurred')
+  catch (e: any) {
+    toast.error(e.message || 'An unexpected error occurred')
+  }
+  finally {
+    isContentFetching.value = false
   }
 }
 async function getContentList() {
+  isLessionFetching.value = true
   try {
     const url = `${runtimeConfig.public.backendDomain}/api/course/${courseName}/lesson/${lessonName}`
-    const { data, error } = await useFetch<Lesson>(url, {
+    const response = await fetch(url, {
       method: 'GET',
       credentials: 'include',
     })
-    if (error.value) {
-      toast.error('Cannot fetch course info')
-    }
-    else {
-      selectedLesson.value = data.value || {
-        _id: '',
-        title: '',
-        contents: [],
-      }
-    }
+    console.log(response)
+    if (!response.ok)
+      throw new Error('Cannot fetch course info')
+
+    const data = await response.json()
+    selectedLesson.value = data
   }
-  catch (e) {
-    toast.error('An unexpected error occurred')
+
+  catch (e: any) {
+    toast.error(e.message || 'An unexpected error occurred')
+  }
+  finally {
+    isLessionFetching.value = false
   }
 }
 
@@ -81,7 +89,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="sm:grid grid-cols-8 px-2 py-5 sm:py-9 gap-5 container max-w-6xl mt-10 mx-auto">
+  <div v-if="isLessionFetching || isContentFetching">
+    <loader />
+  </div>
+  <div v-else class="sm:grid grid-cols-8 px-2 py-5 sm:py-9 gap-5 container max-w-6xl mt-10 mx-auto">
     <div class="sm:col-span-6">
       <iframe
         class="w-full h-96"
@@ -110,7 +121,7 @@ onMounted(() => {
           }"
           @click="prevNextButton(contentIndex + 1)"
         >
-          Next
+          Nexts
         </button>
       </div>
       <div class="sm:hidden sm:col-span-2">
