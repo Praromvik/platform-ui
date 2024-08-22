@@ -70,7 +70,7 @@ async function getContentList() {
 
     const data = await response.json()
     selectedLesson.value = data
-    selectedLesson.value.contents.forEach((element, idx) => {
+    selectedLesson.value.contents.forEach((element: string, idx: number) => {
       if (element === contentName)
         contentIndex.value = idx
     })
