@@ -44,7 +44,6 @@ async function getContent() {
       method: 'GET',
       credentials: 'include',
     })
-    console.log(response)
     if (!response.ok)
       throw new Error('Cannot fetch course info')
 
@@ -66,12 +65,15 @@ async function getContentList() {
       method: 'GET',
       credentials: 'include',
     })
-    console.log(response)
     if (!response.ok)
       throw new Error('Cannot fetch course info')
 
     const data = await response.json()
     selectedLesson.value = data
+    selectedLesson.value.contents.forEach((element, idx) => {
+      if (element === contentName)
+        contentIndex.value = idx
+    })
   }
 
   catch (e: any) {
@@ -94,13 +96,18 @@ onMounted(() => {
   </div>
   <div v-else class="sm:grid grid-cols-8 px-2 py-5 sm:py-9 gap-5 container max-w-6xl mt-10 mx-auto">
     <div class="sm:col-span-6">
-      <iframe
-        class="w-full h-96"
-        :src="selectedContent?.data"
-        :title="selectedContent?.title"
-        frameborder="0"
-        allowfullscreen
-      />
+      <div v-if="selectedContent?.data">
+        <iframe
+          class="w-full h-96"
+          :src="selectedContent?.data"
+          :title="selectedContent?.title"
+          frameborder="0"
+          allowfullscreen
+        />
+      </div>
+      <div v-else class="w-full h-80 text-center text-5xl bg-slate-200">
+        No Media
+      </div>
       <div class="flex justify-between sm:mb-10 mb-6">
         <button
           :disabled="contentIndex === 0"
@@ -127,7 +134,7 @@ onMounted(() => {
       <div class="sm:hidden sm:col-span-2">
         <div class="flex justify-between items-center cursor-pointe border border-gray-300 rounded-t-lg p-3" @click="ifContentHidden = !ifContentHidden">
           <div class="font-semibold">
-            Table Of Content
+            {{ selectedLesson?.title || 'Table Of Content' }}
           </div>
           <div>
             <Icon v-if="!ifContentHidden" name="ep:caret-bottom" size="1.5em" />
@@ -135,7 +142,7 @@ onMounted(() => {
           </div>
         </div>
         <div v-if="!ifContentHidden" class="border border-t-0 border-gray-300 rounded-b-lg h-36 overflow-y-auto">
-          <div v-for="content in selectedLesson.contents" :key="content" @click="router.push(`${content}`)">
+          <div v-for="content in selectedLesson?.contents" :key="content" @click="router.push(`${content}`)">
             <div :class="`flex items-center ${content === contentName ? 'bg-slate-300' : ''} p-2`">
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="fill-current text-gray-600">
                 <path d="m9.5 16.5l7-4.5l-7-4.5zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22" />
@@ -148,15 +155,15 @@ onMounted(() => {
         </div>
       </div>
       <p class="font-bold text-5xl mt-2">
-        {{ selectedContent?.title }}
+        {{ selectedContent?.title || 'Default Title' }}
       </p>
       <hr>
-      <p>{{ selectedContent?.description }}</p>
+      <p>{{ selectedContent?.description || 'Default Description' }}</p>
     </div>
     <div class="hidden sm:block sm:col-span-2">
       <div class="flex justify-between items-center cursor-pointe border border-gray-300 rounded-t-lg p-3">
         <div class="font-semibold">
-          Table Of Content
+          {{ selectedLesson?.title || 'Table Of Content' }}
         </div>
       </div>
       <div class="border border-t-0 border-gray-300 rounded-b-lg">

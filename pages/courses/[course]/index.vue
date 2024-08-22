@@ -16,6 +16,7 @@ interface Course {
   price: number
   image: string
   rating: number
+  requirements: Array<string>
 }
 interface Lesson {
   _id: string
@@ -42,7 +43,6 @@ async function getCourse() {
       method: 'GET',
       credentials: 'include',
     })
-    console.log(response)
     if (!response.ok)
       throw new Error('Cannot fetch course info')
 
@@ -65,7 +65,6 @@ async function getLesson() {
       method: 'GET',
       credentials: 'include',
     })
-    console.log(response)
     if (!response.ok)
       throw new Error('Cannot fetch course info')
     const data = await response.json()
@@ -78,11 +77,13 @@ async function getLesson() {
     isfetchingLesson.value = false
   }
 }
+
 function setUnSetLessonId(_id: string) {
   if (selectedLesson.value === _id)
     selectedLesson.value = ''
   else selectedLesson.value = _id
 }
+
 getCourse()
 getLesson()
 </script>
@@ -91,39 +92,44 @@ getLesson()
   <div v-if="isfetchingCourse || isfetchingLesson">
     <loader />
   </div>
-  <div v-else class="px-2 py-5 sm:py-9 max-w-6xl mt-10 mx-auto">
-    <div class="flex justify-center mb-6">
-      <img class="h-40 w-full" :src="courseObject?.image">
+  <div v-else class="px-2 py-2 sm:py-9 max-w-6xl mt-10 mx-auto">
+    <div class="flex justify-center mb-4">
+      <div v-if="courseObject?.image">
+        <img class="h-40 w-full" :src="courseObject?.image">
+      </div>
+      <div v-else class="h-40 w-full text-center text-5xl bg-slate-200">
+        No Image
+      </div>
     </div>
     <div class="container mx-auto p-4 sm:grid sm:grid-cols-3 sm:gap-4">
       <div class="sm:col-span-2">
         <div class="mb-4">
           <h1 class="text-3xl font-bold">
-            {{ courseObject?.title }}
+            {{ courseObject?.title || 'Default Title' }}
           </h1>
         </div>
         <div class="mb-4">
-          {{ courseObject?.description }}
+          {{ courseObject?.description || 'Default Description' }}
         </div>
         <br>
         <div class="flex justify-between">
-          <div class="font-bold mb-2">
-            Rating: {{ courseObject?.rating }} ⭐
+          <div class="mb-2">
+            <span class="font-bold mb-2">Rating:</span> {{ courseObject?.rating || '0.0' }} ⭐
           </div>
-          <div class="font-bold mb-4">
-            Students Enrolled: {{ courseObject?.students }}
+          <div class="mb-2">
+            <span class="font-bold mb-2">Students Enrolled:</span> {{ courseObject?.students || '00' }}
           </div>
         </div>
         <div class="flex justify-between">
-          <div class="font-bold mb-2">
-            Start Date: {{ courseObject?.startDate }}
+          <div class="mb-2">
+            <span class="font-bold mb-2">Start Date:</span> {{ courseObject?.startDate || 'To be declared' }}
           </div>
-          <div class="font-bold mb-4">
-            Duration: {{ courseObject?.duration }} hours
+          <div class="mb-2">
+            <span class="font-bold mb-2">Duration:</span> {{ courseObject?.duration || '0' }} hours
           </div>
         </div>
-        <div class="font-bold mb-2">
-          Price: {{ courseObject?.price }} tk
+        <div class="mb-2">
+          <span class="font-bold mb-2">Price:</span>  {{ courseObject?.price || '0' }} tk
         </div>
         <br>
         <p class="text-2xl font-bold mb-1">
@@ -132,7 +138,7 @@ getLesson()
         <div v-for="instructor in courseObject?.instructors" :key="instructor" class="flex items-center space-x-4 mb-4">
           <div>
             <img
-              class="h-20 w-20 rounded-full border-2 border-gray-500"
+              class="h-20 w-20 rounded-lg "
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR__2IIAULCR-xberpmuxf-9Jx3cJZLJgLm4tSb9cDwRQ&s"
             >
           </div>
@@ -144,9 +150,16 @@ getLesson()
         <div>
           <b>Requirements</b>
           <ul class="list-disc list-inside">
-            <li>
-              No paid software required - Just install your favorite text editor and browser!
-            </li>
+            <div v-if="courseObject?.requirements">
+              <li v-for="require in courseObject?.requirements" :key="require">
+                {{ require }}
+              </li>
+            </div>
+            <div v-else>
+              <li>
+                No prerequisite
+              </li>
+            </div>
           </ul>
         </div>
         <div class="sm:hidden mt-4 border border-gray-300 h-96 overflow-y-auto">
@@ -159,7 +172,7 @@ getLesson()
               @click="setUnSetLessonId(lesson._id)"
             >
               <div class="font-semibold">
-                {{ lesson.title }}
+                {{ lesson.title || 'Default Title' }}
               </div>
               <div>
                 <Icon v-if="selectedLesson === lesson._id" name="ep:caret-bottom" size="1.5em" />
@@ -199,7 +212,7 @@ getLesson()
             @click="setUnSetLessonId(lesson._id)"
           >
             <div class="font-semibold">
-              {{ lesson.title }}
+              {{ lesson.title || 'Default Title' }}
             </div>
             <div>
               <Icon v-if="selectedLesson === lesson._id" name="ep:caret-bottom" size="1.5em" />
