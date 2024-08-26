@@ -27,6 +27,7 @@ const selectedLesson = ref<Lesson>({
 })
 const selectedContent = ref<Content | null>(null)
 const contentIndex = ref(0)
+const activeTab= ref('description')
 const ifContentHidden = ref(false)
 const runtimeConfig = useRuntimeConfig()
 const isContentFetching = ref(false)
@@ -162,9 +163,44 @@ onMounted(() => {
     </div>
     <div class="hidden sm:block sm:col-span-2">
       <div class="flex justify-between items-center cursor-pointe border border-gray-300 rounded-t-lg p-3">
-        <div class="font-semibold">
+        <p class="font-semibold">
           {{ selectedLesson?.title || 'Table Of Content' }}
-        </div>
+        </p>
+        <hr>
+        <!-- Tabs -->
+          <div class="flex border-b border-gray-300">
+            <button
+              @click="activeTab = 'description'"
+              :class="[
+              'flex-1 text-center py-2 px-4 cursor-pointer',
+              activeTab === 'description' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-blue-500'
+            ]"
+            >
+              Description
+            </button>
+            <button
+              @click="activeTab = 'quiz'"
+              :class="[
+              'flex-1 text-center py-2 px-4 cursor-pointer',
+              activeTab === 'quiz' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-blue-500'
+            ]"
+            >
+              Quiz
+            </button>
+            <button
+              @click="activeTab = 'assignment'"
+              :class="[
+              'flex-1 text-center py-2 px-4 cursor-pointer',
+              activeTab === 'assignment' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-blue-500'
+            ]"
+            >
+              Assignment
+            </button>
+          </div>
+        <div v-if="activeTab='description'">{{ selectedContent?.description || 'Default Description' }}</div>
+        <div v-if="activeTab='quiz'">'Quiz'</div>
+        <div v-if="activeTab='assignment'">'Assignment' </div>
+
       </div>
       <div class="border border-t-0 border-gray-300 rounded-b-lg">
         <div v-for="content in selectedLesson?.contents" :key="content" @click="router.push(`${content}`)">
