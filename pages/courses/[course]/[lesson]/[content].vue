@@ -27,7 +27,7 @@ const selectedLesson = ref<Lesson>({
 })
 const selectedContent = ref<Content | null>(null)
 const contentIndex = ref(0)
-const activeTab= ref('description')
+const activeTab = ref('description')
 const ifContentHidden = ref(false)
 const runtimeConfig = useRuntimeConfig()
 const isContentFetching = ref(false)
@@ -129,7 +129,7 @@ onMounted(() => {
           }"
           @click="prevNextButton(contentIndex + 1)"
         >
-          Nexts
+          Next
         </button>
       </div>
       <div class="sm:hidden sm:col-span-2">
@@ -158,8 +158,48 @@ onMounted(() => {
       <p class="font-bold text-5xl mt-2">
         {{ selectedContent?.title || 'Default Title' }}
       </p>
-      <hr>
-      <p>{{ selectedContent?.description || 'Default Description' }}</p>
+      <!-- Tabs -->
+      <div class="flex border-b border-gray-300 dark:border-gray-700 mt-2">
+        <button
+          class="flex-1 text-center py-3 px-4 cursor-pointer transition-all" :class="[
+            activeTab === 'description' ? 'bg-blue-500 text-white dark:bg-blue-600 dark:border-blue-800'
+            : 'bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700',
+          ]"
+          @click="activeTab = 'description'"
+        >
+          Description
+        </button>
+
+        <button
+          class="flex-1 text-center py-3 px-4 cursor-pointer transition-all" :class="[
+            activeTab === 'quiz' ? 'bg-blue-500 text-white dark:bg-blue-600 dark:border-blue-800'
+            : 'bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700',
+          ]"
+          @click="activeTab = 'quiz'"
+        >
+          Quiz
+        </button>
+        <button
+          class="flex-1 text-center py-3 px-4 cursor-pointer transition-all" :class="[
+            activeTab === 'assignment' ? 'bg-blue-500 text-white dark:bg-blue-600 dark:border-blue-800'
+            : 'bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700',
+          ]"
+          @click="activeTab = 'assignment'"
+        >
+          Assignment
+        </button>
+      </div>
+      <div class="mt-2 p-4  border rounded shadow dark:bg-gray-900 dark:border-gray-700">
+        <div v-if="activeTab === 'description'">
+          {{ selectedContent?.description || 'Default Description' }}
+        </div>
+        <div v-if="activeTab === 'quiz'">
+          Quiz
+        </div>
+        <div v-if="activeTab === 'assignment'">
+          Assignment
+        </div>
+      </div>
     </div>
     <div class="hidden sm:block sm:col-span-2">
       <div class="flex justify-between items-center cursor-pointe border border-gray-300 rounded-t-lg p-3">
@@ -167,40 +207,6 @@ onMounted(() => {
           {{ selectedLesson?.title || 'Table Of Content' }}
         </p>
         <hr>
-        <!-- Tabs -->
-          <div class="flex border-b border-gray-300">
-            <button
-              @click="activeTab = 'description'"
-              :class="[
-              'flex-1 text-center py-2 px-4 cursor-pointer',
-              activeTab === 'description' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-blue-500'
-            ]"
-            >
-              Description
-            </button>
-            <button
-              @click="activeTab = 'quiz'"
-              :class="[
-              'flex-1 text-center py-2 px-4 cursor-pointer',
-              activeTab === 'quiz' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-blue-500'
-            ]"
-            >
-              Quiz
-            </button>
-            <button
-              @click="activeTab = 'assignment'"
-              :class="[
-              'flex-1 text-center py-2 px-4 cursor-pointer',
-              activeTab === 'assignment' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-blue-500'
-            ]"
-            >
-              Assignment
-            </button>
-          </div>
-        <div v-if="activeTab='description'">{{ selectedContent?.description || 'Default Description' }}</div>
-        <div v-if="activeTab='quiz'">'Quiz'</div>
-        <div v-if="activeTab='assignment'">'Assignment' </div>
-
       </div>
       <div class="border border-t-0 border-gray-300 rounded-b-lg">
         <div v-for="content in selectedLesson?.contents" :key="content" @click="router.push(`${content}`)">
