@@ -88,19 +88,23 @@ async function createCourse() {
   }
   try {
     const url = `${runtimeConfig.public.backendDomain}/api/course`
-    await fetch(url, body, {
+    await fetch(url, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
       credentials: 'include',
     })
   }
   catch (e) {
     toast.error(e || 'An unexpected error occurred')
   }
-
-  course.value.lessons.forEach((element) => {
+  course.value.lessons?.forEach((element) => {
     createLesson(element)
   })
 }
+
 async function createLesson(lesson) {
   const body = {
     _id: lesson._id,
@@ -108,18 +112,24 @@ async function createLesson(lesson) {
   }
   try {
     const url = `${runtimeConfig.public.backendDomain}/api/course/${course.value._id}/lesson`
-    await fetch(url, body, {
+    await fetch(url, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
       credentials: 'include',
     })
   }
   catch (e) {
     toast.error(e || 'An unexpected error occurred')
   }
-  lesson.content.forEach((content) => {
+
+  lesson.contents?.forEach((content) => {
     createContent(content, lesson._id)
   })
 }
+
 async function createContent(content, lessonId) {
   const body = {
     _id: content._id,
@@ -131,8 +141,12 @@ async function createContent(content, lessonId) {
   }
   try {
     const url = `${runtimeConfig.public.backendDomain}/api/course/${course.value._id}/content`
-    await fetch(url, body, {
+    await fetch(url, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
       credentials: 'include',
     })
   }
