@@ -82,8 +82,8 @@ async function createCourse() {
     title: course.value.title,
     description: course.value.description,
     start_date: course.value.start_date,
-    students: course.value.students,
-    instructors: course.value.instructors,
+    students: ['1', '2'],
+    instructors: ['rafi', 'zubair'],
     requirements: course.value.requirements,
   }
   try {
