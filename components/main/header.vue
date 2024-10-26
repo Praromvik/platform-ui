@@ -5,7 +5,7 @@ import type { HeaderData, SupportedLanguage } from '~/types/language'
 
 const headerData: HeaderData = languages.header
 const route = useRoute()
-
+const router = useRouter()
 const path = computed(() => route.fullPath.replace('/', ''))
 const isMenuOpen = ref(false)
 const showDropdown = ref(false)
@@ -29,17 +29,20 @@ function toggleLanguage(language: string) {
   appStore.setLanguage(language)
 }
 
-const  items= [
-        { title: 'Click Me' },
-        { title: 'Click Me' },
-        { title: 'Click Me' },
-        { title: 'Click Me 2' },
-      ]
-const praromvikCookies =  useCookie('PRAROMVIK')
-function handleLogout(){
-  praromvikCookies.value = undefined
-  window.location.href ='/'
+const items = [
+  { title: 'Click Me' },
+  { title: 'Click Me' },
+  { title: 'Click Me' },
+  { title: 'Click Me 2' },
+]
 
+function gotoCreatePage() {
+  router.push('/courses/create')
+}
+const praromvikCookies = useCookie('PRAROMVIK')
+function handleLogout() {
+  praromvikCookies.value = undefined
+  window.location.href = '/'
 }
 </script>
 
@@ -57,6 +60,11 @@ function handleLogout(){
       <ul class="flex items-center space-x-3 sm:space-x-6 text-sm sm:text-lg">
         <!-- This section is for Menu in desktop mode -->
         <ul class="hidden sm:flex items-center space-x-3 sm:space-x-6 text-sm sm:text-lg">
+          <li title="Courses" :class="{ underline: path === 'coureses' }">
+            <NuxtLink to="/courses" aria-label="Courses">
+              {{ headerData.courses[selectedlanguage as SupportedLanguage] }}
+            </NuxtLink>
+          </li>
           <li title="Categories" :class="{ underline: path === 'categories' }">
             <NuxtLink to="/categories" aria-label="Category">
               {{ headerData.category[selectedlanguage as SupportedLanguage] }}
@@ -84,7 +92,6 @@ function handleLogout(){
               <Icon name="noto:sun" size="20" />
             </button>
             <template #fallback>
-             
               <Icon name="svg-spinners:180-ring" size="20" />
             </template>
           </ClientOnly>
@@ -119,7 +126,7 @@ function handleLogout(){
             </li>
           </ClientOnly>
         </li>
-        <li v-if="praromvikCookies===undefined">
+        <li v-if="praromvikCookies === undefined">
           <NuxtLink to="/login">
             <button class="bg-sky-700 rounded-xl text-white py-3 px-6 hover:scale-105 duration-300">
               {{ headerData.login[selectedlanguage as SupportedLanguage] }}
@@ -127,18 +134,20 @@ function handleLogout(){
           </NuxtLink>
         </li>
         <li v-else>
+          <div class="profile-container" @click="showDropdown = !showDropdown">
+            <img src="../../assets/images/profile.png" class="profile-image">
+            <div v-if="showDropdown" class="dropdown-menu">
+              <!-- Dropdown content goes here -->
 
-
-
-        <div class="profile-container" @click="showDropdown= !showDropdown">
-        <img src="../../assets/images/profile.png" class="profile-image" />
-        <div  v-if="showDropdown" class="dropdown-menu">
-          <!-- Dropdown content goes here -->
-
-          <h3 @click="handleLogout">Logout</h3>
-        </div>
-      </div>
-      </li>
+              <h3 @click="handleLogout">
+                Logout
+              </h3>
+              <h3 @click="gotoCreatePage">
+                Create Course
+              </h3>
+            </div>
+          </div>
+        </li>
 
         <!-- this div is for Hamburger menu -->
         <div class="sm:hidden relative">
@@ -152,6 +161,11 @@ function handleLogout(){
             class="absolute top-full right-0 mt-2 w-32 dark:bg-blue-950 bg-white shadow-lg rounded-md overflow-hidden "
           >
             <ul class="p-2">
+              <li title="Courses" :class="{ underline: path === 'coureses' }">
+                <NuxtLink to="/courses" aria-label="Courses">
+                  {{ headerData.courses[selectedlanguage as SupportedLanguage] }}
+                </NuxtLink>
+              </li>
               <li title="Categories" :class="{ underline: path === 'categories' }">
                 <NuxtLink to="/categories" aria-label="About me">
                   {{ headerData.category[selectedlanguage as SupportedLanguage] }}
