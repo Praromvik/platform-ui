@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { toast } from 'vue3-toastify'
+import { useRouter } from 'vue-router'
 import { useAppStore } from '~/stores/appStore.js'
 import languages from '~/content/language.json'
 import type { Login, SupportedLanguage } from '~/types/language'
@@ -16,6 +17,7 @@ const appStore = useAppStore()
 const password = ref('')
 const username = ref('')
 const isFetching = ref(false)
+const router = useRouter()
 const passwordVisible = ref(false)
 
 function toggleVisibility() {
@@ -24,7 +26,7 @@ function toggleVisibility() {
 
 async function handleLogin() {
   const runtimeConfig = useRuntimeConfig()
-  const url =  `${runtimeConfig.public.backendDomain}/api/signin`
+  const url = `${runtimeConfig.public.backendDomain}/api/signin`
   isFetching.value = true
   const { error, pending } = await useFetch(url, {
     method: 'post',
@@ -42,7 +44,7 @@ async function handleLogin() {
   else {
     toast.success('Successfully Logged In', { autoClose: 1000 })
     setTimeout(() => {
-       window.location.href = '/'
+      router.push('/')
     }, 1000)
   }
 }

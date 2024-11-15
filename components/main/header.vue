@@ -29,15 +29,12 @@ function toggleLanguage(language: string) {
   appStore.setLanguage(language)
 }
 
-const items = [
-  { title: 'Click Me' },
-  { title: 'Click Me' },
-  { title: 'Click Me' },
-  { title: 'Click Me 2' },
-]
-
 function gotoCreatePage() {
   router.push('/courses/create')
+}
+
+function gotoProfile() {
+  router.push('/user/random_user')
 }
 const praromvikCookies = useCookie('PRAROMVIK')
 function handleLogout() {
@@ -139,11 +136,14 @@ function handleLogout() {
             <div v-if="showDropdown" class="dropdown-menu">
               <!-- Dropdown content goes here -->
 
-              <h3 @click="handleLogout">
-                Logout
+              <h3 @click="gotoProfile">
+                Profile
               </h3>
               <h3 @click="gotoCreatePage">
                 Create Course
+              </h3>
+              <h3 @click="handleLogout">
+                Logout
               </h3>
             </div>
           </div>
