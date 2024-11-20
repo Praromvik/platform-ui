@@ -9,6 +9,7 @@ const course = ref({
   start_date: '',
   students: 0,
   image: '',
+  price: '',
   requirements: [''],
   instructors: [
     {
@@ -161,21 +162,76 @@ function submitForm() {
 
 const mode = ref('create')
 async function fetchInfo() {
-  // isFetching.value = true
   const url = `${runtimeConfig.public.backendDomain}/api/course/${course.value._id}`
+  const lessionUrl = `${runtimeConfig.public.backendDomain}/api/course/${course.value._id}/lesson/list`
+  const contentUrl = `${runtimeConfig.public.backendDomain}/api/course/${course.value._id}/content/list`
   try {
     const response = await fetch(url, {
       method: 'GET',
       credentials: 'include',
     })
+    const lessionResp = await fetch(lessionUrl, {
+      method: 'GET',
+      credentials: 'include',
+    })
+    const contentResp = await fetch(contentUrl, {
+      method: 'GET',
+      credentials: 'include',
+    })
     const data = await response.json()
-    // courseList.value = data
-    course.value = data
+    const lessions = await lessionResp.json()
+    const contents = await contentResp.json()
+
+    course.value._id = data._id
+    course.value.description = data.description || ''
+    course.value.title = data.title
+    course.value.image = data.image || ''
+    course.value.instructors = data.instructor || []
+    course.value.requirements = data.requirements || []
+    course.value.start_date = data.start_date || ''
+    course.value.price = data.price
+    course.value.lessons = []
+    course.value.students = []
+    lessions.forEach((ele) => {
+      const tempLession = {}
+      tempLession._id = ele._id
+      tempLession.title = ele.title
+      const tempcontents = []
+      contents.forEach((cont) => {
+        if (cont.lessonRef === ele._id) {
+          tempcontents.push({
+            _id: cont._id,
+            courseRef: cont._courseRef,
+            lessonRef: cont._lessionRef,
+            title: cont.title || '',
+            url: cont.data || '',
+            description: cont.description || '',
+          })
+        }
+      })
+      tempLession.contents = tempcontents
+      course.value.lessons.push(tempLession)
+    })
   }
   catch (e) {
-    toast.error('Cannot fetch Courses List')
+    toast.error('Cannot fetch Courses info')
   }
-  // isFetching.value = false
+}
+
+async function updateCourse() {
+  try {
+    const url = `${runtimeConfig.public.backendDomain}/api/course/${course.value._id}`
+    await fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify(course.value),
+      credentials: 'include',
+    },
+    )
+    toast.success('update successful')
+  }
+  catch (e) {
+    toast.error(e)
+  }
 }
 </script>
 
@@ -252,6 +308,11 @@ async function fetchInfo() {
           <div>
             <label class="block font-medium text-gray-700">Students:</label>
             <input v-model.number="course.students" type="number" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+          </div>
+
+          <div>
+            <label class="block font-medium text-gray-700">Price:</label>
+            <input v-model.number="course.price" type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
           </div>
 
           <div>
@@ -336,7 +397,10 @@ async function fetchInfo() {
         </button>
       </div>
 
-      <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md">
+      <button v-if="mode === 'edit'" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md" @click.prevent="updateCourse">
+        Edit Info
+      </button>
+      <button v-else type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md">
         Create Course
       </button>
     </form>
