@@ -41,6 +41,14 @@ function handleLogout() {
   praromvikCookies.value = undefined
   window.location.href = '/'
 }
+
+onMounted(() => {
+  praromvikCookies.value = useCookie('PRAROMVIK').value
+})
+
+watch(() => route.fullPath, () => {
+  praromvikCookies.value = useCookie('PRAROMVIK').value
+})
 </script>
 
 <template>
