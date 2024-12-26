@@ -14,9 +14,9 @@ export default defineNuxtConfig({
     layoutTransition: { name: 'layout', mode: 'out-in' },
   },
   runtimeConfig: {
-     public: {
-       backendDomain: process.env.NUXT_PUBLIC_BACKEND_DOMAIN
-     }
+    public: {
+      backendDomain: '',
+    },
   },
   sitemap: {
     strictNuxtContentPaths: true,
@@ -50,7 +50,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
-     (_options, nuxt) => {
+    (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
         config.plugins.push(vuetify({ autoImport: true }))
@@ -67,7 +67,7 @@ export default defineNuxtConfig({
     'nuxt-simple-sitemap',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
-    "@stefanobartoletti/nuxt-social-share"
+    '@stefanobartoletti/nuxt-social-share',
   ],
 
   content: {
@@ -79,10 +79,10 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
   vite: {
-      vue: {
-        template: {
-          transformAssetUrls,
-        },
+    vue: {
+      template: {
+        transformAssetUrls,
       },
     },
+  },
 })
