@@ -9,6 +9,8 @@ const router = useRouter()
 const path = computed(() => route.fullPath.replace('/', ''))
 const isMenuOpen = ref(false)
 const showDropdown = ref(false)
+const dropdownRef = ref<HTMLElement | null>(null)
+const isLoggedIn = ref(false)
 // Access the store
 const appStore = useAppStore()
 
@@ -36,10 +38,27 @@ function gotoCreatePage() {
 function gotoProfile() {
   router.push('/user/random_user')
 }
-const praromvikCookies = useCookie('PRAROMVIK')
-function handleLogout() {
-  window.console.log('a')
+function handleClickOutside(e: MouseEvent) {
+  if (dropdownRef.value && !dropdownRef.value.contains(e.target as Node))
+    showDropdown.value = false
 }
+function handleLogout() {
+  localStorage.removeItem('token')
+  isLoggedIn.value = false
+  router.push('/login')
+}
+watch(route, () => {
+  isLoggedIn.value = !!localStorage.getItem('token')
+})
+
+onMounted(() => {
+  isLoggedIn.value = !!localStorage.getItem('token')
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
 
 <template>
@@ -122,7 +141,7 @@ function handleLogout() {
             </li>
           </ClientOnly>
         </li>
-        <li v-if="praromvikCookies === undefined">
+        <li v-if="!isLoggedIn">
           <NuxtLink to="/login">
             <button class="bg-sky-700 rounded-xl text-white py-3 px-6 hover:scale-105 duration-300">
               {{ headerData.login[selectedlanguage as SupportedLanguage] }}
@@ -130,11 +149,9 @@ function handleLogout() {
           </NuxtLink>
         </li>
         <li v-else>
-          <div class="profile-container" @click="showDropdown = !showDropdown">
+          <div ref="dropdownRef" class="profile-container" @click="showDropdown = !showDropdown">
             <img src="../../assets/images/profile.png" class="profile-image">
             <div v-if="showDropdown" class="dropdown-menu">
-              <!-- Dropdown content goes here -->
-
               <h3 @click="gotoProfile">
                 Profile
               </h3>
